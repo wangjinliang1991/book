@@ -19,4 +19,14 @@ spring:
     show-sql: true
 server:
   port: 8081
+gitee:
+  clientId: e006f72878685a5d8bf8ccb195e45cd037600211dcb77939daaef429bfc381c3
+  clientSecret: d2d4618c7f39cee2dea244db28999813ed4b562ca8fde537110fe9d95f4a56c6
+  callBack: http://localhost:8081/gitee
+  state: GITEE
+  user:
+    prefix: GITEE@
+    url: https://gitee.com/api/v5/user?access_token=
+  token:
+    url: https://gitee.com/oauth/token?grant_type=authorization_code&client_id=${gitee.clientId}&client_secret=${gitee.clientSecret}&redirect_uri=${gitee.callBack}&code=
 
