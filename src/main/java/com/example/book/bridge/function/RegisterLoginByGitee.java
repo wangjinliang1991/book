@@ -1,6 +1,7 @@
 package com.example.book.bridge.function;
 
 import cn.hutool.json.JSONObject;
+import com.example.book.bridge.abst.factory.RegisterLoginComponentFactory;
 import com.example.book.pojo.UserInfo;
 import com.example.book.repo.UserRepository;
 import com.example.book.utils.HttpClientUtils;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
@@ -19,7 +21,13 @@ import java.util.Date;
  */
 @Slf4j
 @Component
-public class RegisterLoginByGitee implements RegisterLoginFuncInterface{
+public class RegisterLoginByGitee extends AbstractRegisterLoginFunc implements RegisterLoginFuncInterface{
+
+    @PostConstruct
+    private void initFuncMap() {
+        RegisterLoginComponentFactory.funcMap.put("GITEE", this);
+    }
+
     private static final String ACCESS_TOKEN = "access_token";
     @Value("${gitee.state}")
     private String giteeState;
@@ -33,31 +41,6 @@ public class RegisterLoginByGitee implements RegisterLoginFuncInterface{
     private UserRepository userRepository;
 
     @Override
-    public String login(String account, String password) {
-        UserInfo userInfo = userRepository.findByUserNameAndUserPassword(account, password);
-        if (userInfo == null) {
-            return "account or password error";
-        }
-        return "login success";
-    }
-
-    @Override
-    public String register(UserInfo userInfo) {
-        if (checkUserExist(userInfo.getUserName())) {
-            return "username already exist";
-        }
-        userInfo.setCreateDate(new Date());
-        userRepository.save(userInfo);
-        return "register success";
-    }
-
-    @Override
-    public boolean checkUserExist(String userName) {
-        UserInfo userInfo = userRepository.findByUserName(userName);
-        return userInfo != null;
-    }
-
-    @Override
     public String login3rd(HttpServletRequest request) {
         String code = request.getParameter("code");
         String state = request.getParameter("state");
@@ -68,7 +51,7 @@ public class RegisterLoginByGitee implements RegisterLoginFuncInterface{
         String tokenUrl = giteeTokenUrl.concat(code);
         JSONObject tokenResponse = HttpClientUtils.execute(tokenUrl, HttpMethod.POST);
         String token = String.valueOf(tokenResponse.get(ACCESS_TOKEN));
-        if (token == null) {
+        if (token == null || token.equals("null")) {
             throw new UnsupportedOperationException("Invalid token");
         }
         //请求用户信息，携带token
@@ -82,15 +65,15 @@ public class RegisterLoginByGitee implements RegisterLoginFuncInterface{
 
     private String autoRegister3rdAndLogin(String userName, String password) {
         //如果登录过
-        if (checkUserExist(userName)) {
-            return login(userName, password);
+        if (super.commonCheckUserExist(userName,userRepository)) {
+            return super.commonLogin(userName, password,userRepository);
         }
         UserInfo userInfo = new UserInfo();
         userInfo.setUserName(userName);
         userInfo.setUserPassword(password);
         userInfo.setCreateDate(new Date());
         // 如果第一次登录，先进行自动注册
-        register(userInfo);
-        return login(userName, password);
+        super.commonRegister(userInfo,userRepository);
+        return super.commonLogin(userName, password,userRepository);
     }
 }
