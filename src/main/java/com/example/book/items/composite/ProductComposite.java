@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductComposite extends AbstractProductItem implements Serializable {
+public class ProductComposite extends AbstractProductItem {
     private int id;
     private int pid;
     private String name;
