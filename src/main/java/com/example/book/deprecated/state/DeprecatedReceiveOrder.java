@@ -21,6 +21,7 @@ public class DeprecatedReceiveOrder extends DeprecatedAbstractOrderState{
         }
         order.setState(ORDER_FINISH);
         redisCommonProcessor.remove(orderId);
-        return null;
+        super.notifyObserver(orderId,ORDER_FINISH);
+        return order;
     }
 }

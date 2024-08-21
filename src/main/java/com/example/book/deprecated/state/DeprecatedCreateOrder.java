@@ -27,6 +27,7 @@ public class DeprecatedCreateOrder extends DeprecatedAbstractOrderState{
         redisCommonProcessor.set(orderId,order,900);
         //顶大创建完成，设置上下文的currenState为待支付
         context.setCurrentState(this.deprecatedPayOrder);
-        return null;
+        super.notifyObserver(orderId,ORDER_WAIT_PAY);
+        return order;
     }
 }

@@ -27,6 +27,7 @@ public class DeprecatedPayOrder extends DeprecatedAbstractOrderState{
         // 发送订单支付event
         // 订单支付完成，修改状态
         context.setCurrentState(this.deprecatedSendOrder);
-        return null;
+        super.notifyObserver(orderId,ORDER_WAIT_SEND);
+        return order;
     }
 }

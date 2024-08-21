@@ -7,4 +7,5 @@ package com.example.book.deprecated.observer;
 public abstract class DeprecatedAbstractObserver {
     //订单发声状态变更，调用该方法
     public abstract void orderStateHandle(String orderId, String orderState);
+
 }
