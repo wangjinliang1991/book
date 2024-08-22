@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author wangjl
  * @date 2024/8/14
@@ -27,7 +29,7 @@ public class RedisCommonProcessor {
 
     public void set(String key, Object value, long time) {
         if (time > 0) {
-            redisTemplate.opsForValue().set(key, value, time);
+            redisTemplate.opsForValue().set(key, value, time, TimeUnit.SECONDS);
         } else {
             set(key,value);
         }

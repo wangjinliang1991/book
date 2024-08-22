@@ -16,9 +16,9 @@ public class DeprecatedCreateOrder extends DeprecatedAbstractOrderState{
     private DeprecatedPayOrder deprecatedPayOrder;
 
     @Override
-    protected DeprecatedOrder createOrder(String orderId, String productId, DeprecatedOrderContext context) {
+    protected Order createOrder(String orderId, String productId, DeprecatedOrderContext context) {
         //订单创建完成，设置为待支付
-        DeprecatedOrder order = DeprecatedOrder.builder()
+        Order order = Order.builder()
                 .orderId(orderId)
                 .productId(productId)
                 .state(ORDER_WAIT_PAY)

@@ -30,19 +30,19 @@ public abstract class DeprecatedAbstractOrderState {
             observer.orderStateHandle(orderId,orderState);
         }
     }
-    protected DeprecatedOrder createOrder(String orderId,String productId,DeprecatedOrderContext context) {
+    protected Order createOrder(String orderId, String productId, DeprecatedOrderContext context) {
         throw new UnsupportedOperationException();
     }
 
-    protected DeprecatedOrder payOrder(String orderId,DeprecatedOrderContext context) {
+    protected Order payOrder(String orderId, DeprecatedOrderContext context) {
         throw new UnsupportedOperationException();
     }
 
-    protected DeprecatedOrder sendOrder(String orderId,DeprecatedOrderContext context) {
+    protected Order sendOrder(String orderId, DeprecatedOrderContext context) {
         throw new UnsupportedOperationException();
     }
 
-    protected DeprecatedOrder receiveOrder(String orderId,DeprecatedOrderContext context) {
+    protected Order receiveOrder(String orderId, DeprecatedOrderContext context) {
         throw new UnsupportedOperationException();
     }
 

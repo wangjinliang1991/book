@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeprecatedOrder {
+public class Order {
     private String orderId;
 
     private String productId;

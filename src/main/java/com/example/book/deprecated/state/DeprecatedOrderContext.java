@@ -19,27 +19,27 @@ public class DeprecatedOrderContext {
         this.currentState = currentState;
     }
 
-    public DeprecatedOrder createOrder(String orderId,String productId) {
+    public Order createOrder(String orderId, String productId) {
         this.currentState = this.deprecatedCreateOrder;
-        DeprecatedOrder order = currentState.createOrder(orderId, productId, this);
+        Order order = currentState.createOrder(orderId, productId, this);
         return order;
     }
 
-    public DeprecatedOrder payOrder(String orderId) {
+    public Order payOrder(String orderId) {
         this.currentState = this.deprecatedCreateOrder;
-        DeprecatedOrder order = currentState.payOrder(orderId, this);
+        Order order = currentState.payOrder(orderId, this);
         return order;
     }
 
-    public DeprecatedOrder sendOrder(String orderId) {
+    public Order sendOrder(String orderId) {
         this.currentState = this.deprecatedCreateOrder;
-        DeprecatedOrder order = currentState.sendOrder(orderId, this);
+        Order order = currentState.sendOrder(orderId, this);
         return order;
     }
 
-    public DeprecatedOrder receiveOrder(String orderId) {
+    public Order receiveOrder(String orderId) {
         this.currentState = this.deprecatedCreateOrder;
-        DeprecatedOrder order = currentState.sendOrder(orderId, this);
+        Order order = currentState.sendOrder(orderId, this);
         return order;
     }
 }

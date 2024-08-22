@@ -15,8 +15,8 @@ public class DeprecatedPayOrder extends DeprecatedAbstractOrderState{
     @Autowired
     private DeprecatedSendOrder deprecatedSendOrder;
     @Override
-    protected DeprecatedOrder payOrder(String orderId,DeprecatedOrderContext context) {
-        DeprecatedOrder order = (DeprecatedOrder) redisCommonProcessor.get(orderId);
+    protected Order payOrder(String orderId, DeprecatedOrderContext context) {
+        Order order = (Order) redisCommonProcessor.get(orderId);
         if (!order.getState().equals(ORDER_WAIT_PAY)) {
             throw new UnsupportedOperationException("order state should be ORDER_WAIT_PAY, but now it's state is: "+order.getState());
         }
