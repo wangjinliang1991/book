@@ -1,5 +1,8 @@
 package com.example.book.ordermanagement.listener;
 
+import com.example.book.ordermanagement.command.OrderCommand;
+import com.example.book.ordermanagement.command.invoker.OrderCommandInvoker;
+import com.example.book.ordermanagement.command.receiver.OrderCommandReceiver;
 import com.example.book.ordermanagement.state.OrderState;
 import com.example.book.ordermanagement.state.OrderStateChangeAction;
 import com.example.book.pojo.Order;
@@ -19,6 +22,8 @@ import org.springframework.stereotype.Component;
 public class OrderStateListener {
     @Autowired
     private RedisCommonProcessor redisCommonProcessor;
+    @Autowired
+    private OrderCommand orderCommand;
 
     @OnTransition(source = "ORDER_WAIT_PAY", target = "ORDER_WAIT_SEND")
     public boolean payToSend(Message<OrderStateChangeAction> message) {
@@ -29,7 +34,8 @@ public class OrderStateListener {
         //支付成功，修改状态
         order.setOrderState(OrderState.ORDER_WAIT_SEND);
         redisCommonProcessor.set(order.getOrderId(),order);
-        // todo 命令模式处理
+        OrderCommandInvoker invoker = new OrderCommandInvoker();
+        invoker.invoke(orderCommand,order);
         return true;
     }
 
@@ -41,7 +47,8 @@ public class OrderStateListener {
         }
         order.setOrderState(OrderState.ORDER_WAIT_RECEIVE);
         redisCommonProcessor.set(order.getOrderId(),order);
-        // todo 命令模式处理
+        OrderCommandInvoker invoker = new OrderCommandInvoker();
+        invoker.invoke(orderCommand,order);
         return true;
     }
 
@@ -53,7 +60,8 @@ public class OrderStateListener {
         }
         order.setOrderState(OrderState.ORDER_FINISH);
         redisCommonProcessor.set(order.getOrderId(),order);
-        // todo 命令模式处理
+        OrderCommandInvoker invoker = new OrderCommandInvoker();
+        invoker.invoke(orderCommand,order);
         return true;
     }
 }

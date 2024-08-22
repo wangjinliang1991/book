@@ -1,5 +1,7 @@
 package com.example.book.service;
 
+import com.example.book.ordermanagement.command.OrderCommand;
+import com.example.book.ordermanagement.command.invoker.OrderCommandInvoker;
 import com.example.book.ordermanagement.state.OrderState;
 import com.example.book.ordermanagement.state.OrderStateChangeAction;
 import com.example.book.pojo.Order;
@@ -25,6 +27,8 @@ public class OrderService {
 
     @Autowired
     private RedisCommonProcessor redisCommonProcessor;
+    @Autowired
+    private OrderCommand orderCommand;
 
     public Order createOrder(String productId) {
         //订单生成的逻辑
@@ -35,6 +39,8 @@ public class OrderService {
                 .orderState(OrderState.ORDER_WAIT_PAY)
                 .build();
         redisCommonProcessor.set(orderId,order,900);
+        OrderCommandInvoker invoker = new OrderCommandInvoker();
+        invoker.invoke(orderCommand,order);
         return order;
     }
 
