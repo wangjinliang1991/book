@@ -4,6 +4,7 @@ import com.example.book.ordermanagement.command.OrderCommand;
 import com.example.book.ordermanagement.command.invoker.OrderCommandInvoker;
 import com.example.book.ordermanagement.state.OrderState;
 import com.example.book.ordermanagement.state.OrderStateChangeAction;
+import com.example.book.pay.facade.PayFacade;
 import com.example.book.pojo.Order;
 import com.example.book.utils.RedisCommonProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class OrderService {
     private RedisCommonProcessor redisCommonProcessor;
     @Autowired
     private OrderCommand orderCommand;
+
+    @Autowired
+    private PayFacade payFacade;
 
     public Order createOrder(String productId) {
         //订单生成的逻辑
@@ -102,4 +106,9 @@ public class OrderService {
     }
 
 
+    public String getPayUrl(String orderId, Float price, Integer payType) {
+        Order order = (Order) redisCommonProcessor.get(orderId);
+        order.setPrice(price);
+        return payFacade.pay(order, payType);
+    }
 }
