@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  * @date 2024/8/22
  */
 @Service
-public class OrderService {
+public class OrderService implements OrderServiceInterface{
     @Autowired
     private StateMachine<OrderState, OrderStateChangeAction> orderStateMachine;
 

@@ -5,9 +5,11 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.example.book.pojo.Order;
 import com.example.book.service.OrderService;
+import com.example.book.service.decorator.OrderServiceDecorator;
 import com.example.book.utils.Constants;
 import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +30,10 @@ import java.util.Map;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderServiceDecorator orderServiceDecorator;
+    @Value("${service.level}")
+    private Integer serviceLevel;
 
     // 订单创建
     @PostMapping("/create")
@@ -80,7 +86,9 @@ public class OrderController {
             String trade_no = new String(request.getParameter("trade_no"));
             float total_amount = Float.parseFloat(new String(request.getParameter("total_amount")));
             //进行相关的业务操作，修改订单状态为待发货状态
-            Order order = orderService.pay(out_trade_no);
+//            Order order = orderService.pay(out_trade_no);
+            orderServiceDecorator.setOrderServiceInterface(orderService);
+            Order order = orderServiceDecorator.decoratorPay(out_trade_no, serviceLevel, total_amount);
             return "支付成功页面跳转，当前订单为：" +order;
         } else {
             throw new UnsupportedOperationException("callback verify failed");
