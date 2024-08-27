@@ -44,9 +44,9 @@ public class OrderController {
     // 订单支付
     @PostMapping("/pay")
     public String payOrder(@RequestParam String orderId,
-                          @RequestParam Float price,
-                          @RequestParam Integer payType) {
-        return orderService.getPayUrl(orderId,price,payType);
+                           @RequestParam Float price,
+                           @RequestParam Integer payType) {
+        return orderService.getPayUrl(orderId, price, payType);
     }
 
     // 订单发送
@@ -72,7 +72,7 @@ public class OrderController {
             String[] values = requestParams.get(name);
             String valueStr = "";
             for (int i = 0; i < values.length; i++) {
-                valueStr = (i== values.length-1)?valueStr+values[i]:valueStr+values[i]+",";
+                valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
             }
             params.put(name, valueStr);
         }
@@ -89,9 +89,14 @@ public class OrderController {
 //            Order order = orderService.pay(out_trade_no);
             orderServiceDecorator.setOrderServiceInterface(orderService);
             Order order = orderServiceDecorator.decoratorPay(out_trade_no, serviceLevel, total_amount);
-            return "支付成功页面跳转，当前订单为：" +order;
+            return "支付成功页面跳转，当前订单为：" + order;
         } else {
             throw new UnsupportedOperationException("callback verify failed");
         }
+    }
+
+    @PostMapping("/friendPay")
+    public void friendPay(String sourceCustomer, String orderId, String targetCustomer, String payResult, String role) {
+        orderService.friendPay(sourceCustomer, orderId, targetCustomer, payResult, role);
     }
 }

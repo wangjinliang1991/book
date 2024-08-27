@@ -6,6 +6,9 @@ import com.example.book.ordermanagement.state.OrderState;
 import com.example.book.ordermanagement.state.OrderStateChangeAction;
 import com.example.book.pay.facade.PayFacade;
 import com.example.book.pojo.Order;
+import com.example.book.transaction.colleague.Buyer;
+import com.example.book.transaction.colleague.Payer;
+import com.example.book.transaction.mediator.Mediator;
 import com.example.book.utils.RedisCommonProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
@@ -110,5 +113,19 @@ public class OrderService implements OrderServiceInterface{
         Order order = (Order) redisCommonProcessor.get(orderId);
         order.setPrice(price);
         return payFacade.pay(order, payType);
+    }
+
+    public void friendPay(String sourceCustomer, String orderId, String targetCustomer, String payResult, String role) {
+        //创建中介者
+        Mediator mediator = new Mediator();
+        Buyer buyer = new Buyer( mediator, orderId,sourceCustomer);
+        Payer payer = new Payer( mediator, orderId,sourceCustomer);
+        mediator.setBuyer(buyer);
+        mediator.setPayer(payer);
+        if (role.equals("B")) {
+            buyer.messageTransfer(orderId,targetCustomer,payResult);
+        } else if (role.equals("P")) {
+            buyer.messageTransfer(orderId,targetCustomer,payResult);
+        }
     }
 }
