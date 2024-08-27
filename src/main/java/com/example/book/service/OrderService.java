@@ -6,6 +6,7 @@ import com.example.book.ordermanagement.state.OrderState;
 import com.example.book.ordermanagement.state.OrderStateChangeAction;
 import com.example.book.pay.facade.PayFacade;
 import com.example.book.pojo.Order;
+import com.example.book.transaction.colleague.AbstractCustomer;
 import com.example.book.transaction.colleague.Buyer;
 import com.example.book.transaction.colleague.Payer;
 import com.example.book.transaction.mediator.Mediator;
@@ -16,6 +17,8 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.persist.StateMachinePersister;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 
 /**
  * @author wangjl
@@ -36,6 +39,9 @@ public class OrderService implements OrderServiceInterface{
 
     @Autowired
     private PayFacade payFacade;
+
+    @Autowired
+    private Mediator mediator;
 
     public Order createOrder(String productId) {
         //订单生成的逻辑
@@ -117,15 +123,16 @@ public class OrderService implements OrderServiceInterface{
 
     public void friendPay(String sourceCustomer, String orderId, String targetCustomer, String payResult, String role) {
         //创建中介者
-        Mediator mediator = new Mediator();
         Buyer buyer = new Buyer( mediator, orderId,sourceCustomer);
         Payer payer = new Payer( mediator, orderId,sourceCustomer);
-        mediator.setBuyer(buyer);
-        mediator.setPayer(payer);
+        HashMap<String, AbstractCustomer> map = new HashMap<>();
+        map.put("buyer", buyer);
+        map.put("payer",payer);
+        mediator.addInstance(orderId,map);
         if (role.equals("B")) {
             buyer.messageTransfer(orderId,targetCustomer,payResult);
         } else if (role.equals("P")) {
-            buyer.messageTransfer(orderId,targetCustomer,payResult);
+            payer.messageTransfer(orderId,targetCustomer,payResult);
         }
     }
 }
