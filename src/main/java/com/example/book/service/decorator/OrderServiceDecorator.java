@@ -1,5 +1,6 @@
 package com.example.book.service.decorator;
 
+import com.example.book.ordermanagement.audit.PayOrderLog;
 import com.example.book.pojo.Order;
 import com.example.book.pojo.Products;
 import com.example.book.repo.ProductsRepository;
@@ -23,6 +24,8 @@ public class OrderServiceDecorator extends AbstractOrderServiceDecorator{
     private ProductsRepository productsRepository;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private PayOrderLog payOrderLog;
 
     @Override
     protected void updateScoreAndSendRedPaper(String productId, int serviceLevel, float price) {
@@ -63,6 +66,7 @@ public class OrderServiceDecorator extends AbstractOrderServiceDecorator{
         }catch (Exception e){
             //处理异常
         }
+        payOrderLog.createAuditLog("testAccount", "pay", orderId);
         return order;
     }
 }

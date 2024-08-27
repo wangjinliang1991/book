@@ -1,5 +1,9 @@
 package com.example.book.service;
 
+import com.example.book.ordermanagement.audit.CreateOrderLog;
+import com.example.book.ordermanagement.audit.PayOrderLog;
+import com.example.book.ordermanagement.audit.ReceiveOrderLog;
+import com.example.book.ordermanagement.audit.SendOrderLog;
 import com.example.book.ordermanagement.command.OrderCommand;
 import com.example.book.ordermanagement.command.invoker.OrderCommandInvoker;
 import com.example.book.ordermanagement.state.OrderState;
@@ -42,6 +46,14 @@ public class OrderService implements OrderServiceInterface{
 
     @Autowired
     private Mediator mediator;
+    @Autowired
+    private CreateOrderLog createOrderLog;
+    @Autowired
+    private PayOrderLog payOrderLog;
+    @Autowired
+    private SendOrderLog sendOrderLog;
+    @Autowired
+    private ReceiveOrderLog receiveOrderLog;
 
     public Order createOrder(String productId) {
         //订单生成的逻辑
@@ -54,6 +66,8 @@ public class OrderService implements OrderServiceInterface{
         redisCommonProcessor.set(orderId,order,900);
         OrderCommandInvoker invoker = new OrderCommandInvoker();
         invoker.invoke(orderCommand,order);
+        // 暂时 testAccount 后续可以从用户中心获取account
+        createOrderLog.createAuditLog("testAccount", "create", orderId);
         return order;
     }
 
@@ -79,6 +93,7 @@ public class OrderService implements OrderServiceInterface{
                 .build();
         // message传给状态机
         if (changeSateAction(message, order)) {
+            sendOrderLog.createAuditLog("testAccount", "send", orderId);
             return order;
         }
         return null;
@@ -92,6 +107,7 @@ public class OrderService implements OrderServiceInterface{
                 .build();
         // message传给状态机
         if (changeSateAction(message, order)) {
+            receiveOrderLog.createAuditLog("testAccount", "receive", orderId);
             return order;
         }
         return null;
