@@ -7,6 +7,7 @@ import com.example.book.pojo.BusinessLaunch;
 import com.example.book.pojo.UserInfo;
 import com.example.book.repo.BusinessLaunchRepository;
 import com.example.book.repo.UserRepository;
+import com.example.book.ticket.director.DirectorProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,8 @@ public class UserService {
     private String currentHandlerType;
     //记录责任链头节点，没有配置更改，下次直接返回
     private AbstractBusinessHandler currentHandler;
+    @Autowired
+    private DirectorProxy directorProxy;
 
 
     public String login(String account, String password) {
@@ -96,5 +99,9 @@ public class UserService {
                 }
             }
         }
+    }
+
+    public Object createTicket(String type, String productId, String content, String title, String bankInfo, String taxId) {
+        return directorProxy.buildTicket(type, productId, content, title, bankInfo, taxId);
     }
 }
